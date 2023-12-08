@@ -1,7 +1,7 @@
 # weather-fullstack
 ## to run the backend:
 >cd server
->npm start
+>>npm start
 
 ## to run the frontend:
 >cd client
