@@ -45,6 +45,8 @@ const formSchema = z.object({
   lon: z.string(),
 });
 
+
+
 ///////function starts///////
 export default function index() {
 
@@ -96,6 +98,11 @@ export default function index() {
     }
   }, [weatherobj]);
 
+
+  const onHomeButtonClick = () => {
+    setWeatherobj({});
+    form.reset();
+  };
   return (
     <>
       <div className="flex min-h-screen flex-col items-center justify-between p-20">
@@ -103,7 +110,7 @@ export default function index() {
         {Object.keys(weatherobj).length !== 0 ? (
           <div>
             <div className="text-center">
-              <Button onClick={() => setWeatherobj({})}>
+              <Button onClick={onHomeButtonClick}>
                 Home
               </Button>
             </div>
@@ -147,9 +154,7 @@ export default function index() {
                 </p>
                 <TbTemperatureCelsius />
               </CardFooter>
-
             </Card>
-
           </div>
         ) : (
           // this form s how it start, when the weatherobj has nothing saved
@@ -162,7 +167,8 @@ export default function index() {
                   <FormItem>
                     <FormLabel>Latitude</FormLabel>
                     <FormControl>
-                      <Input type="number" step="any" placeholder="41.90" {...field} />
+                      {/* the latitud is min -90 and max 90 */}
+                      <Input type="number" step="any" min="-90" max="90" placeholder="41.90" {...field} />
                     </FormControl>
                     <FormDescription>This is the Latitude field.</FormDescription>
                     <FormMessage />
@@ -176,7 +182,8 @@ export default function index() {
                   <FormItem>
                     <FormLabel>Longitude</FormLabel>
                     <FormControl>
-                      <Input type="number" step="any" placeholder="12.49" {...field} />
+                      {/* the latitud is min -180 and max 180 */}
+                      <Input type="number" step="any" min="-180" max="180" placeholder="41.90" {...field} />
                     </FormControl>
                     <FormDescription>This is the Longitude field.</FormDescription>
                     <FormMessage />
