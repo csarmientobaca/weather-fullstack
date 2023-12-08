@@ -98,7 +98,7 @@ export default function index() {
     }
   }, [weatherobj]);
 
-
+  //function to clean reset the weatherobj and clean the inputs
   const onHomeButtonClick = () => {
     setWeatherobj({});
     form.reset();
