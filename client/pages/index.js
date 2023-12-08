@@ -34,7 +34,7 @@ import {
 //use for the form component shadcn
 const formSchema = z.object({
   lat: z.string(),
-  long: z.string(),
+  lon: z.string(),
 });
 
 export default function index() {
@@ -46,7 +46,7 @@ export default function index() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       lat: "",
-      long: "",
+      lon: "",
     },
   });
 
@@ -56,7 +56,7 @@ export default function index() {
     try {
       console.log(data)
 
-      const response = await fetch(baseUrl + `lat=${data.lat}&lon=${data.long}`,
+      const response = await fetch(baseUrl + `lat=${data.lat}&lon=${data.lon}`,
         {
           method: 'POST',
           headers: {
@@ -64,7 +64,7 @@ export default function index() {
           },
           body: JSON.stringify({
             lat: data.lat,
-            long: data.long,
+            lon: data.lon,
           })
         })
 
@@ -81,12 +81,6 @@ export default function index() {
     }
   }
 
-
-
-  useEffect(() => {
-    console.log("this is weatherobj:", weatherobj);
-  }, [weatherobj]);
-
   useEffect(() => {
     if (Object.keys(weatherobj).length !== 0) {
       console.log("this is weatherobj:", weatherobj.weather);
@@ -100,23 +94,23 @@ export default function index() {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>{ }</CardTitle>
+              <CardTitle>{weatherobj.name}</CardTitle>
               <Avatar>
                 <AvatarImage src={`https://openweathermap.org/img/wn/${weatherobj.weather[0].icon}@2x.png`} />
                 <AvatarFallback>weatherIcon</AvatarFallback>
               </Avatar>
-              <CardDescription>Description</CardDescription>
+              <CardDescription>{weatherobj.weather[0].description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Card Content</p>
+              <p>{weatherobj.main.temp}</p>
             </CardContent>
             <CardFooter>
-              <p>Card Footer</p>
+              <p>{weatherobj.main.temp_min}</p>
+            </CardFooter>
+            <CardFooter>
+              <p>{weatherobj.main.temp_max}</p>
             </CardFooter>
           </Card>
-          <h1>
-            {JSON.stringify(weatherobj.main)}
-          </h1>
         </div>
       ) : (
         <Form {...form}>
@@ -137,7 +131,7 @@ export default function index() {
             />
             <FormField
               control={form.control}
-              name="long"
+              name="lon"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Longitude</FormLabel>
