@@ -13,11 +13,13 @@ app.use(cors());
 
 app.post("/api/getWeather", async (req, res) => {
     try {
+        //this lat and long are form the frontend
         const { lat, long } = req.body;
         console.log(lat, long)
         const apiKey = process.env.WEATHER_API_KEY;
 
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}9&appid=${apiKey}`;
+        //the apkey is form the .env.local
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}9&appid=${apiKey}&units=metric`;
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
@@ -33,5 +35,5 @@ app.post("/api/getWeather", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+    console.log(`server on port ${PORT}`);
 });
