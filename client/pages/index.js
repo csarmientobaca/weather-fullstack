@@ -182,7 +182,7 @@ export default function index() {
                   <FormItem>
                     <FormLabel>Longitude</FormLabel>
                     <FormControl>
-                      {/* the latitud is min -180 and max 180 */}
+                      {/* the longitude is min -180 and max 180 */}
                       <Input type="number" step="any" min="-180" max="180" placeholder="41.90" {...field} />
                     </FormControl>
                     <FormDescription>This is the Longitude field.</FormDescription>
