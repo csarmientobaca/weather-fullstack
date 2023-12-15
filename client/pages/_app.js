@@ -16,9 +16,9 @@ client
     query: gql`
     query getWeather($lat: Float!, $lon: Float!) {
       getWeather(lat: $lat, lon: $lon) {
-        coord {
-          lon
-          lat
+        weather {
+          icon
+          id
         }
       }
     }
