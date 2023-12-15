@@ -1,19 +1,22 @@
-const express = require("express");
+import Fastify from "fastify"
+import dotenv from "dotenv"
 
-const dotenv = require("dotenv");
-const cors = require("cors");
+import cors from '@fastify/cors'
 
-require('dotenv').config({ path: '.env.local' });
 
-const app = express();
-const PORT = 8080;
+(dotenv).config({ path: '.env.local' });
 
-app.use(express.json());
-app.use(cors());
+const fastify = Fastify({
+    logger: true
+})
+await fastify.register(cors, {
+    // put your options here
+})
 
-app.post("/api/getWeather", async (req, res) => {
+
+fastify.post("/api/getWeather", async (request, reply) => {
     try {
-        const { lat, lon } = req.body;
+        const { lat, lon } = request.body;
         console.log(lat, lon)
         const apiKey = process.env.WEATHER_API_KEY;
 
@@ -25,14 +28,12 @@ app.post("/api/getWeather", async (req, res) => {
             throw new Error("External API request failed");
         }
         const weatherData = await response.json();
-        res.json(weatherData);
+        return weatherData
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
     }
-});
+})
 
-
-app.listen(PORT, () => {
-    console.log(`server on port ${PORT}`);
-});
+fastify.listen({ port: 8080 }, (err, address) => {
+    if (err) throw err
+})

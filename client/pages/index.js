@@ -106,7 +106,7 @@ export default function index() {
   return (
     <>
       <div className="flex min-h-screen flex-col items-center justify-between p-20">
-        {/* if the weatherobj is without data show the form, if not the show the data inside the weather obj */}
+        {/* if the weatherobj is without data show the form, if not the show the data inside the weather obj, rendering con */}
         {Object.keys(weatherobj).length !== 0 ? (
           <div>
             <div className="text-center">
