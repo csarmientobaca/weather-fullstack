@@ -1,23 +1,22 @@
-import Fastify from "fastify"
-import dotenv from "dotenv"
+import Fastify from "fastify";
+import dotenv from "dotenv";
+import cors from "@fastify/cors";
+import mercurius from "mercurius";
+import fetch from "node-fetch";
 
-import cors from '@fastify/cors'
-import mercurius from "mercurius"
-
-(dotenv).config({ path: '.env.local' });
+dotenv.config({ path: ".env.local" });
 
 const fastify = Fastify({
-    logger: true
-})
-await fastify.register(cors, {
-    // put your options here
-})
+  logger: true,
+});
 
+// cors configuration
+fastify.register(cors, {
+});
 
-
-
-const typeDef = `
-type Coord {
+//GraphQL Schema
+const typeDefs = `
+  type Coord {
     lon: Float
     lat: Float
   }
@@ -47,7 +46,7 @@ type Coord {
   }
 
   type RainInfo {
-    "1h": Float
+    oneHour: Float
   }
 
   type CloudInfo {
@@ -82,41 +81,47 @@ type Coord {
   type Query {
     getWeather(lat: Float!, lon: Float!): Weather
   }
-`
+`;
+
+
+//resolver with the same logic as the previus post
 const resolvers = {
-    Query: {
-        weather: async () => {
-            return weatherData
-        }
-    }
-}
-
-fastify.register(mercurius, {
-    schema: typeDef,
-    resolvers: resolvers,
-    graphiql: true
-})
-
-fastify.post("/api/getWeather", async (request, reply) => {
-    try {
-        const { lat, lon } = request.body;
-        console.log(lat, lon)
+  Query: {
+    getWeather: async (_, { lat, lon }) => {
+      try {
         const apiKey = process.env.WEATHER_API_KEY;
-
-        //the apkey is form the .env.local
         const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&lang=it&appid=${apiKey}&units=metric`;
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
-            throw new Error("External API request failed");
+          throw new Error("External API request failed");
         }
-        const weatherData = await response.json();
-        return weatherData
-    } catch (error) {
-        console.error(error);
-    }
-})
 
+        const weatherData = await response.json();
+        return weatherData;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Internal Server Error");
+      }
+    },
+  },
+};
+
+// mercuriu plugin
+fastify.register(mercurius, {
+  schema: typeDefs,
+  resolvers: resolvers,
+  graphiql: true, //use with localhost:8080/graphiql
+});
+
+
+//this dont work now
+fastify.post("/api/getWeather", async (request, reply) => {
+
+});
+
+// Start the Fastify server
 fastify.listen({ port: 8080 }, (err, address) => {
-    if (err) throw err
-})
+  if (err) throw err;
+  console.log(`Server listening on ${address}`);
+});
