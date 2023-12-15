@@ -2,13 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 
-import {
-  ApolloProvider,
-  ApolloClient,
-  createHttpLink,
-  InMemoryCache
-} from '@apollo/client';
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
@@ -52,20 +45,6 @@ const formSchema = z.object({
   lon: z.string(),
 });
 
-const httpLink = createHttpLink({
-  uri: 'http://localhost:4000'
-});
-const client = new ApolloClient({
-  link: httpLink,
-  cache: new InMemoryCache()
-});
-
-ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>,
-  document.getElementById('root')
-);
 
 
 ///////function starts///////
