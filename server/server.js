@@ -91,7 +91,11 @@ const resolvers = {
     }
 }
 
-
+fastify.register(mercurius, {
+    schema: typeDef,
+    resolvers: resolvers,
+    graphiql: true
+})
 
 fastify.post("/api/getWeather", async (request, reply) => {
     try {
