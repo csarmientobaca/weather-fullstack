@@ -2,7 +2,7 @@ import Fastify from "fastify"
 import dotenv from "dotenv"
 
 import cors from '@fastify/cors'
-
+import mercurius from "mercurius"
 
 (dotenv).config({ path: '.env.local' });
 
@@ -12,6 +12,85 @@ const fastify = Fastify({
 await fastify.register(cors, {
     // put your options here
 })
+
+
+
+
+const typeDef = `
+type Coord {
+    lon: Float
+    lat: Float
+  }
+
+  type WeatherInfo {
+    id: Int
+    main: String
+    description: String
+    icon: String
+  }
+
+  type MainInfo {
+    temp: Float
+    feels_like: Float
+    temp_min: Float
+    temp_max: Float
+    pressure: Int
+    humidity: Int
+    sea_level: Int
+    grnd_level: Int
+  }
+
+  type WindInfo {
+    speed: Float
+    deg: Int
+    gust: Float
+  }
+
+  type RainInfo {
+    "1h": Float
+  }
+
+  type CloudInfo {
+    all: Int
+  }
+
+  type SysInfo {
+    type: Int
+    id: Int
+    country: String
+    sunrise: Int
+    sunset: Int
+  }
+
+  type Weather {
+    coord: Coord
+    weather: [WeatherInfo]
+    base: String
+    main: MainInfo
+    visibility: Int
+    wind: WindInfo
+    rain: RainInfo
+    clouds: CloudInfo
+    dt: Int
+    sys: SysInfo
+    timezone: Int
+    id: Int
+    name: String
+    cod: Int
+  }
+
+  type Query {
+    getWeather(lat: Float!, lon: Float!): Weather
+  }
+`
+const resolvers = {
+    Query: {
+        weather: async () => {
+            return weatherData
+        }
+    }
+}
+
 
 
 fastify.post("/api/getWeather", async (request, reply) => {
