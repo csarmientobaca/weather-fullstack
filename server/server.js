@@ -63,7 +63,7 @@ const typeDefs = `
 
   type Weather {
     coord: Coord
-    weather: [WeatherInfo]
+    weather: WeatherInfo
     base: String
     main: MainInfo
     visibility: Int
