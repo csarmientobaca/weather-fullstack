@@ -47,13 +47,73 @@ const formSchema = z.object({
 import { useQuery, gql } from '@apollo/client';
 
 
+const GET_COORDS = gql`
+  query GetWeather($lat: Float!, $lon: Float!) {
+    getWeather(lat: $lat, lon: $lon) {
+      coord {
+        lat
+        lon
+      }
+    }
+  }
+`;
+
+const GET_WEATHER = gql`
+query GetWeather($lat: Float!, $lon: Float!) {
+  getWeather(lat: $lat, lon: $lon) {
+    weather {
+      icon
+      id
+    }
+  }
+}
+`;
+
+
 
 ///////function starts///////
 export default function index() {
+  const { loading: loadingCoords, error: errorCoords, data: dataCoords } = useQuery(GET_COORDS, {
+    variables: { lat: 12, lon: 33 }
+  });
+
+  const { loading: loadingWeather, error: errorWeather, data: dataWeather } = useQuery(GET_WEATHER, {
+    variables: { lat: 33, lon: 33 }
+  });
+
+
+  if (loadingCoords || loadingWeather) return <p>Loading...</p>;
+
+  if (errorCoords || errorWeather) {
+    return (
+      <p>
+        Error: {errorCoords ? errorCoords.message : errorWeather.message}
+      </p>
+    );
+  }
+
+  const { coord } = dataCoords.getWeather;
+  const { weather } = dataWeather.getWeather;
+
+
 
   return (
     <>
-      <h1>hello world</h1>
+      <h1>
+        Hello world coordinates:
+        <br />lat {coord.lat}
+        <br />lon {coord.lon}
+      </h1>
+
+      <h1>
+        Hello world weather:
+        {weather.map((w) => (
+          <div key={w.id}>
+            <br />id {w.id}
+            <br />icon {w.icon}
+          </div>
+        ))}
+      </h1>
     </>
   )
 }
