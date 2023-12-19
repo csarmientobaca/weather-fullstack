@@ -69,51 +69,104 @@ query GetWeather($lat: Float!, $lon: Float!) {
 }
 `;
 
+const GET_ALL = gql`
+query GetWeather($lat: Float!, $lon: Float!){
+  getWeather(lat: $lat, lon: $lon) {
+    name
+    weather{
+      id
+      icon
+      description
+    }
+    coord{
+      lat
+      lon
+    }
+    main{
+      temp
+      temp_min
+      temp_max
+    }
+  }
+}
+`
 
 
 ///////function starts///////
 export default function index() {
-  const { loading: loadingCoords, error: errorCoords, data: dataCoords } = useQuery(GET_COORDS, {
-    variables: { lat: 12, lon: 33 }
+  const { loading: loadingAll, error: errorAll, data: dataAll } = useQuery(GET_ALL, {
+    variables: { lat: 11, lon: 11 }
   });
 
-  const { loading: loadingWeather, error: errorWeather, data: dataWeather } = useQuery(GET_WEATHER, {
-    variables: { lat: 33, lon: 33 }
-  });
+  // const { loading: loadingCoords, error: errorCoords, data: dataCoords } = useQuery(GET_COORDS, {
+  //   variables: { lat: 12, lon: 33 }
+  // });
+
+  // const { loading: loadingWeather, error: errorWeather, data: dataWeather } = useQuery(GET_WEATHER, {
+  //   variables: { lat: 33, lon: 33 }
+  // });
 
 
-  if (loadingCoords || loadingWeather) return <p>Loading...</p>;
+  if (loadingAll) return <p>Loading...</p>;
 
-  if (errorCoords || errorWeather) {
+  if (errorAll) {
     return (
       <p>
-        Error: {errorCoords ? errorCoords.message : errorWeather.message}
+        Error: {errorAll.message}
       </p>
     );
   }
 
-  const { coord } = dataCoords.getWeather;
-  const { weather } = dataWeather.getWeather;
-
+  // const { coord } = dataCoords.getWeather;
+  // const { weather } = dataWeather.getWeather;
+  const { name, weather, coord, main } = dataAll.getWeather;
 
 
   return (
     <>
-      <h1>
-        Hello world coordinates:
-        <br />lat {coord.lat}
-        <br />lon {coord.lon}
-      </h1>
+      <div className="flex min-h-screen flex-col items-center justify-between p-20">
+        <Card className="space-y-4 w-80 text-center bg-blue-100">
+          <CardHeader className="flex items-center justify-center flex-col">
+            <CardTitle>{name}</CardTitle>
+            {/* in this avatar the link is an image that the API provides too */}
+            <Avatar className="mt-2">
+              <AvatarImage src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`} />
+              <AvatarFallback>weatherIcon</AvatarFallback>
+            </Avatar>
+            <CardDescription>
+              {weather[0].description}
+            </CardDescription>
+            <CardDescription className="flex items-center">
+              <TbWorldLatitude />
+              <p className="ml-1">Latitude: {coord.lat}</p>
+              <TbWorldLongitude className="ml-2" />
+              <p className="ml-1">Longitude: {coord.lon}</p>
+            </CardDescription>
+          </CardHeader>
 
-      <h1>
-        Hello world weather:
-        {weather.map((w) => (
-          <div key={w.id}>
-            <br />id {w.id}
-            <br />icon {w.icon}
-          </div>
-        ))}
-      </h1>
+          <CardFooter className="flex items-center justify-center">
+            <p>
+              {main.temp}
+            </p>
+            <TbTemperatureCelsius />
+          </CardFooter>
+          <CardFooter className="flex items-center justify-center">
+            <FaTemperatureArrowDown />
+            <p>
+              MIN {main.temp_min}
+            </p>
+            <TbTemperatureCelsius />
+          </CardFooter>
+          <CardFooter className="flex items-center justify-center">
+            <FaTemperatureArrowUp />
+            <p>
+              MAX {main.temp_max}
+            </p>
+            <TbTemperatureCelsius />
+          </CardFooter>
+        </Card>
+      </div>
+
     </>
   )
 }
@@ -173,7 +226,6 @@ export default function index() {
 //   };
 //   return (
 //     <>
-//       <div className="flex min-h-screen flex-col items-center justify-between p-20">
 //         {/* if the weatherobj is without data show the form, if not the show the data inside the weather obj, rendering con */}
 //         {Object.keys(weatherobj).length !== 0 ? (
 //           <div>
@@ -182,47 +234,6 @@ export default function index() {
 //                 Home
 //               </Button>
 //             </div>
-//             <Card className="space-y-4 w-80 text-center bg-blue-100">
-//               <CardHeader className="flex items-center justify-center flex-col">
-//                 <CardTitle>{weatherobj.name.trim() !== "" ? weatherobj.name : "nothing/no city"}</CardTitle>
-
-//                 {/* in this avatar the link is an image that the API provides too */}
-//                 <Avatar className="mt-2">
-//                   <AvatarImage src={`https://openweathermap.org/img/wn/${weatherobj.weather[0].icon}@2x.png`} />
-//                   <AvatarFallback>weatherIcon</AvatarFallback>
-//                 </Avatar>
-//                 <CardDescription>
-//                   {weatherobj.weather[0].description}
-//                 </CardDescription>
-//                 <CardDescription className="flex items-center">
-//                   <TbWorldLatitude />
-//                   <p className="ml-1">Latitude: {weatherobj.coord.lat}</p>
-//                   <TbWorldLongitude className="ml-2" />
-//                   <p className="ml-1">Longitude: {weatherobj.coord.lon}</p>
-//                 </CardDescription>
-//               </CardHeader>
-
-//               <CardFooter className="flex items-center justify-center">
-//                 <p>
-//                   {weatherobj.main.temp}
-//                 </p>
-//                 <TbTemperatureCelsius />
-//               </CardFooter>
-//               <CardFooter className="flex items-center justify-center">
-//                 <FaTemperatureArrowDown />
-//                 <p>
-//                   MIN {weatherobj.main.temp_min}
-//                 </p>
-//                 <TbTemperatureCelsius />
-//               </CardFooter>
-//               <CardFooter className="flex items-center justify-center">
-//                 <FaTemperatureArrowUp />
-//                 <p>
-//                   MAX {weatherobj.main.temp_max}
-//                 </p>
-//                 <TbTemperatureCelsius />
-//               </CardFooter>
-//             </Card>
 //           </div>
 //         ) : (
 //           // this form s how it start, when the weatherobj has nothing saved
@@ -262,7 +273,6 @@ export default function index() {
 //             </form>
 //           </Form>
 //         )}
-//       </div>
 //     </>
 //   );
 // }
