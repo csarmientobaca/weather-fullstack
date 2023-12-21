@@ -220,7 +220,7 @@ export default function index() {
                 </CardDescription>
                 {includeWind && <CardDescription>Wind speed: {wind.speed}</CardDescription>}
                 {includeClouds && <CardDescription>Sky visibility/clouds : {clouds.all}%</CardDescription>}
-                {includeTimezone && <CardDescription>Timezone: {(timezone / 3600)}</CardDescription>}
+                {includeTimezone && <CardDescription>Timezone: {(timezone / 3600)} UTC</CardDescription>}
                 <CardDescription className="flex items-center">
                   <TbWorldLatitude />
                   <p className="ml-1">Latitude: {coord.lat}</p>
